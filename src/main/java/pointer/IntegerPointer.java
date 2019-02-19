@@ -12,12 +12,12 @@ public class IntegerPointer extends Pointer<Integer> {
     @Override
     public void next() {
         String str = getReader().readLine();
-        if(str == null) {
+        if (str == null) {
             setPoint(null);
         } else {
             try {
                 setPoint(Integer.valueOf(str));
-            }catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 next();
                 ex.printStackTrace();
             }

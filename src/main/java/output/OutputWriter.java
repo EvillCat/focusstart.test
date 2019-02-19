@@ -20,6 +20,7 @@ public class OutputWriter {
     public void write(Pointer pointer) {
         try {
             bufferedWriter.write((pointer.getPoint().toString()) + "\n");
+            bufferedWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }

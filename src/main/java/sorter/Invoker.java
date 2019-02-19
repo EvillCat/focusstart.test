@@ -37,7 +37,7 @@ public class Invoker {
         for (String path : inputFiles) {
             pointer = parser.isSortTypeString()
                     ? new StringPointer(createReader(path))
-                    :new IntegerPointer(createReader(path));
+                    : new IntegerPointer(createReader(path));
             sorter.addPointer(pointer);
         }
     }

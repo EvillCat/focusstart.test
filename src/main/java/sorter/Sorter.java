@@ -44,14 +44,29 @@ class Sorter<T extends Comparable<T>> {
         return currentMax;
     }
 
+    //Метод проверяет не нарушает ли последующий элемент последовательности порядка сортировки
+    //в сравнении с предыдущим элементом. Если нарушает, то метод просто читает следующий элемент
+    private void checkNextValueOnSortOrder(Pointer<T> current) {
+        T previousValue = current.getPoint();
+        current.next();
+        T nextValue = current.getPoint();
+        if (nextValue == null)
+            return;
+        if (isSortOrderAsc && previousValue.compareTo(nextValue) > 0) {
+            checkNextValueOnSortOrder(current);
+        }
+        if (!isSortOrderAsc && previousValue.compareTo(nextValue) < 0) {
+            checkNextValueOnSortOrder(current);
+        }
+    }
+
     private void writeCurrentAndDoNext(Pointer<T> current) {
         writer.write(current);
-        current.next();
+        checkNextValueOnSortOrder(current);
         if (current.getPoint() == null) {
             current.getReader().close();
             pointers.remove(current);
         }
-
     }
 
     void sortAndWrite() {
