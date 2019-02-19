@@ -1,6 +1,8 @@
 package sorter;
 
+import input.DirectOrderReader;
 import input.InputFileReader;
+import input.ReverseOrderReader;
 import parser.Parser;
 import pointer.IntegerPointer;
 import pointer.Pointer;
@@ -12,29 +14,35 @@ public class Invoker {
 
     private Parser parser;
     private Sorter<?> sorter;
-    private Pointer pointer;
-    private String outputFilePath;
     private List<String> inputFiles;
     private boolean sortOrder;
 
-    public Invoker(String[] args) throws Exception{
+    public Invoker(String[] args) throws Exception {
         parser = new Parser(args);
-        outputFilePath = parser.outputFilePath();
         inputFiles = parser.inputFiles();
         sortOrder = parser.isSortOrderAscending();
-        sorter = new Sorter<>(outputFilePath, sortOrder);
+        sorter = new Sorter<>(parser.outputFilePath(), sortOrder);
+    }
+
+    private InputFileReader createReader(String path) {
+        if (parser.isSortOrderAscending()) {
+            return new DirectOrderReader(path);
+        } else {
+            return new ReverseOrderReader(path);
+        }
     }
 
     private void addPointersToBuffer() {
+        Pointer pointer;
         for (String path : inputFiles) {
             pointer = parser.isSortTypeString()
-                    ? new StringPointer(InputFileReader.createCurrentReader(path, sortOrder))
-                    : new IntegerPointer(InputFileReader.createCurrentReader(path, sortOrder));
+                    ? new StringPointer(createReader(path))
+                    :new IntegerPointer(createReader(path));
             sorter.addPointer(pointer);
         }
     }
 
-    public void sort(){
+    public void sort() {
         addPointersToBuffer();
         sorter.sortAndWrite();
     }

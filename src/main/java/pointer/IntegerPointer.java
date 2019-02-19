@@ -15,7 +15,12 @@ public class IntegerPointer extends Pointer<Integer> {
         if(str == null) {
             setPoint(null);
         } else {
-            setPoint(Integer.valueOf(str));
+            try {
+                setPoint(Integer.valueOf(str));
+            }catch (NumberFormatException ex) {
+                next();
+                ex.printStackTrace();
+            }
         }
     }
 }

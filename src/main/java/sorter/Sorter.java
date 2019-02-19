@@ -6,28 +6,19 @@ import pointer.Pointer;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Sorter<T extends Comparable<T>> {
+class Sorter<T extends Comparable<T>> {
     private List<Pointer<T>> pointers = new LinkedList<>();
     private OutputWriter writer;
     private boolean isSortOrderAsc;
 
-    public Sorter(String path, boolean isSortOrderAsc) {
+    Sorter(String path, boolean isSortOrderAsc) {
         writer = new OutputWriter(path);
         this.isSortOrderAsc = isSortOrderAsc;
     }
 
-    public void addPointer(Pointer pointer) {
+    void addPointer(Pointer<T> pointer) {
         pointers.add(pointer);
     }
-
-//    private boolean isPointersBufferEmpty() {
-//        for (int i = 0; i < pointers.size(); i++) {
-//            if (pointers.get(i).getPoint() == null) {
-//                pointers.remove(i);
-//            }
-//        }
-//        return pointers.size() != 0;
-//    }
 
     private Pointer<T> findMin() {
         Pointer<T> currentMin = pointers.get(0);
@@ -53,25 +44,24 @@ public class Sorter<T extends Comparable<T>> {
         return currentMax;
     }
 
-    public void sortAndWrite() {
+    private void writeCurrentAndDoNext(Pointer<T> current) {
+        writer.write(current);
+        current.next();
+        if (current.getPoint() == null) {
+            current.getReader().close();
+            pointers.remove(current);
+        }
 
+    }
+
+    void sortAndWrite() {
         if (isSortOrderAsc) {
             while (pointers.size() != 0) {
-                Pointer<T> currentMin = findMin();
-                writer.write(currentMin);
-                currentMin.next();
-                if (currentMin.getPoint() == null) {
-                    pointers.remove(pointers.indexOf(currentMin));
-                }
+                writeCurrentAndDoNext(findMin());
             }
         } else {
             while (pointers.size() != 0) {
-                Pointer<T> currentMax = findMax();
-                writer.write(currentMax);
-                currentMax.next();
-                if (currentMax.getPoint() == null) {
-                    pointers.remove(pointers.indexOf(currentMax));
-                }
+                writeCurrentAndDoNext(findMax());
             }
         }
         writer.close();
